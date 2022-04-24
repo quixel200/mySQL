@@ -1,0 +1,67 @@
+import mysql.connector
+mydb= mysql.connector.connect(host='localhost',
+                              user='root',
+                              passwd='keerthi2005',
+                              database='management'
+                              )
+mycursor=mydb.cursor()
+#mycursor.execute("create database management")
+#mycursor.execute("create table student_details(roll int(5) primary key auto_increment,name varchar(20), admission_number varchar(10), stream varchar(5))")
+#mycursor.execute("create table marks(roll int NOT NULL primary key,foreign key(roll) references student_details(roll), physics int, chemistry int, maths int, english int, computer int)")
+def insert():
+    L=[]
+    name=input("enter the students name:")
+    L.append(name)
+    ad_no=input("enter the students admission number:")
+    L.append(ad_no)
+    stream=input("enter the students stream:")
+    L.append(stream)
+    stud=(L)
+    sql="INSERT INTO student_details (name,admission_number,stream) values(%s,%s,%s)"
+    mycursor.execute(sql,stud)
+    mydb.commit()
+    print("Student ",name," added sucessfully")
+def remove():
+    roll=int(input("enter the roll no. of the student to be deleted:"))
+    rl=(roll,)
+    sql="delete from student_details where roll=%s"
+    mycursor.execute(sql,rl)
+    mydb.commit()
+    print("student has been removed from the table")
+def add_marks():
+    L1=[]
+    total_marks=int(input("enter the maximum marks:"))
+    mycursor.execute("SELECT name FROM student_details")
+    for x in mycursor:
+        print("enter marks for",x,":")
+        for i in x:
+            L=[]
+            phy = int(input("physics marks:"))
+            L.append(phy)
+            chem = int(input("chemistry marks:"))
+            L.append(chem)
+            maths = int(input("math marks:"))
+            L.append(maths)
+            eng=int(input("english marks:"))
+            L.append(eng)
+            comp = int(input("computer marks:"))
+            L.append(comp)
+            a=tuple(L)
+            L1.append(a)
+            del[a]
+    Q1="INSERT INTO marks (physics,chemistry,maths,english,computer) VALUES (%s,%s,%s,%s,%s)"
+    for x in range (len(L1)):
+        mycursor.execute(Q1,L1[x])
+    mydb.commit()
+def view():
+    print("1. view student detials")
+    print("2. view student marks")
+    choice=int(input("enter your choice:"))
+    if choice==1:
+        mycursor.execute("select * from student_details")
+        for x in mycursor:
+            print(x)
+    elif choice==2:
+        mycursor.execute("select * from marks")
+        for x in mycursor:
+            print(x)

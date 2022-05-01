@@ -1,4 +1,8 @@
+import tkinter as tk
+from tkinter import *
 import mysql.connector
+import os
+my_w=tk.Tk()
 mydb= mysql.connector.connect(host='localhost',
                               user='root',
                               passwd='keerthi2005',
@@ -6,8 +10,7 @@ mydb= mysql.connector.connect(host='localhost',
                               )
 mycursor=mydb.cursor()
 #mycursor.execute("create database management")
-#mycursor.execute("create table student_details(roll int(5) primary key auto_increment,name varchar(20), admission_number varchar(10), stream varchar(5))")
-#mycursor.execute("create table marks(roll int NOT NULL primary key,foreign key(roll) references student_details(roll), physics int, chemistry int, maths int, english int, computer int)")
+#mycursor.execute("create table student_details(roll int(5) primary key auto_increment,name varchar(20), admission_number varchar(10), stream varchar(5), physics int, chemistry int, maths int, english int, computer int,percentage float)")
 def insert():
     L=[]
     name=input("enter the students name:")
@@ -28,7 +31,7 @@ def remove():
     mycursor.execute(sql,rl)
     mydb.commit()
     print("student has been removed from the table")
-def add_marks():
+def all_marks():
     L1=[]
     total_marks=int(input("enter the maximum marks:"))
     mycursor.execute("SELECT name FROM student_details")
@@ -46,22 +49,92 @@ def add_marks():
             L.append(eng)
             comp = int(input("computer marks:"))
             L.append(comp)
+            perc=(phy+chem+maths+eng+comp)/(5*total_marks)*100
+            L.append(perc)
             a=tuple(L)
             L1.append(a)
             del[a]
-    Q1="INSERT INTO marks (physics,chemistry,maths,english,computer) VALUES (%s,%s,%s,%s,%s)"
+    Q1="INSERT INTO student_details(physics,chemistry,maths,english,computer,percentage) VALUES (%s,%s,%s,%s,%s,%s)"
     for x in range (len(L1)):
         mycursor.execute(Q1,L1[x])
     mydb.commit()
 def view():
-    print("1. view student detials")
-    print("2. view student marks")
-    choice=int(input("enter your choice:"))
-    if choice==1:
         mycursor.execute("select * from student_details")
         for x in mycursor:
-            print(x)
-    elif choice==2:
-        mycursor.execute("select * from marks")
-        for x in mycursor:
-            print(x)
+            for a in range(len(x)):
+                i=0
+                e=Entry(my_w,width=10,fg='black')
+                e.grid(row=i,column=a)
+                e.insert(END,x[a])
+            i=i+1
+        my_w.mainloop()
+def single_marks():
+    L1=[]
+    select=input("enter the name of the subject to enter marks for:")
+    mycursor.execute("select name from student_details")
+    for x in mycursor:
+        print("enter marks for",x,":")
+        for i in x:
+            mark=int(input(""))
+            tuple(mark)
+            L1.append(mark)
+    T=tuple(L1)
+    if select=='physics':
+        Q1="insert into student_details(physics) vakues (%s)"
+        mycursor.execute(Q1,T)
+    elif select=='chemistry':
+        Q1="insert into student_details(chemistry) vakues (%s)"
+        mycursor.execute(Q1,T)
+    elif select=='maths':
+        Q1="insert into student_details(maths) vakues (%s)"
+        mycursor.execute(Q1,T)
+    elif select=='computer':
+        Q1="insert into student_details(computer) vakues (%s)"
+        mycursor.execute(Q1,T)
+    elif select=='english:
+        Q1="insert into student_details(english) vakues (%s)"
+        mycursor.execute(Q1,T)
+    else:
+        print("invalid subject entered")
+def menu():
+    print("1.to insert student detials")
+    print("2.to remove student")
+    print("3.to add marks for all subjects")
+    print("4.to add marks for a single subject")
+    print("5.to view details")
+
+    try:
+        user_input = int(input("please select an option above:"))
+    except ValueError:
+        exit("something other than a number was entered")
+    else:
+        print("\n")
+        if (user_input==1):
+            i=int(input("enter the number of students you want to enter:"))
+            for x in range(i):
+                insert()
+        elif (user_input==2):
+            remove()
+        elif (user_input==3):
+            all_marks()
+        elif (user_input==4):
+            single_marks()
+        elif (user_input==5):
+            view()
+        else:
+            print("invalid number entered")
+menu()
+
+def runAgain():
+    run=input("\nwant to run again? (y/n):")
+    while(run.lower() == 'y'):
+        if(platform.system() == 'Windows'):
+            print(os.system('cls'))
+        else:
+            print(os.system('clear'))
+        menu()
+        run=input("\nwant to run again? (y/n):")
+
+runAgain()
+    
+        

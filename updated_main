@@ -59,13 +59,6 @@ def insert_marks():
     max_marks=int(input("enter the maximum marks for the exam:"))
     q1="create table if not exists {}(name varchar(20) references student_details(name),physics int,chemistry int,maths int,computer int,english int,total_percentage float)".format(exam)
     mycursor.execute(q1)
-    q2="select name from {}".format(exam)
-    names=[]
-    mycursor.execute(q2)
-    for x in mycursor:
-        names.append(str(x[0]))
-    global name_count
-    name_count=0
     def add_marks():
 
         mydb= mysql.connector.connect(host='localhost',
@@ -74,54 +67,54 @@ def insert_marks():
                                 database='school'
                                 )
         mycursor=mydb.cursor(buffered=True)
-        try:
-            global name_count
-            name_count+=1
-            name=names[name_count]
-            a=int(physics.get())
-            b=int(chemistry.get())
-            c=int(maths.get())
-            d=int(computer.get())
-            e=int(english.get())
-            f=a+b+c+d+e/(5*max_marks)*100
-            L=(name,a,b,c,d,e,f)
-            q3="insert into {} values(%s,%s,%s,%s,%s,%s,%s)".format(exam)
-            mycursor.execute(q3,L)
-            del(L)
-            #clear the text boxes
-            physics.delete(0,END)
-            chemistry.delete(0,END)
-            maths.delete(0,END)
-            computer.delete(0,END)
-            english.delete(0,END)
-        except IndexError:            
-            print("marks entered for all students,please close the window")
+        x=str(name.get())
+        a=int(physics.get())
+        b=int(chemistry.get())
+        c=int(maths.get())
+        d=int(computer.get())
+        e=int(english.get())
+        f=a+b+c+d+e/(5*max_marks)*100
+        L=(x,a,b,c,d,e,f)
+        q3="insert into {} values(%s,%s,%s,%s,%s,%s,%s)".format(exam)
+        mycursor.execute(q3,L)
+        mydb.commit()
+        del(L)
+        #clear the text boxes
+        physics.delete(0,END)
+        chemistry.delete(0,END)
+        maths.delete(0,END)
+        computer.delete(0,END)
+        english.delete(0,END)
+        name.delete(0,END)
+    name=Entry(root1,width=30)
+    name.grid(row=0,column=1)
     physics=Entry(root1,width=30)
-    physics.grid(row=0,column=1,padx=20)
+    physics.grid(row=1,column=1,padx=20)
     chemistry=Entry(root1,width=30)
-    chemistry.grid(row=1,column=1,padx=20)
+    chemistry.grid(row=2,column=1,padx=20)
     maths=Entry(root1,width=30)
-    maths.grid(row=2,column=1,padx=20)
+    maths.grid(row=3,column=1,padx=20)
     computer=Entry(root1,width=30)
-    computer.grid(row=3,column=1,padx=20)
+    computer.grid(row=4,column=1,padx=20)
     english=Entry(root1,width=30)
-    english.grid(row=4,column=1,padx=20)
+    english.grid(row=5,column=1,padx=20)
+    name_label=Label(root1,text="Name")
+    name_label.grid(row=0,column=0)
     physics_label=Label(root1,text="physics")
-    physics_label.grid(row=0,column=0)
+    physics_label.grid(row=1,column=0)
     chemistry_label=Label(root1,text="chemistry")
-    chemistry_label.grid(row=1,column=0)
+    chemistry_label.grid(row=2,column=0)
     maths_label=Label(root1,text="maths")
-    maths_label.grid(row=2,column=0)
+    maths_label.grid(row=3,column=0)
     computer_label=Label(root1,text="computer")
-    computer_label.grid(row=3,column=0)
+    computer_label.grid(row=4,column=0)
     english_label=Label(root1,text="english")
-    english_label.grid(row=4,column=0)
+    english_label.grid(row=5,column=0)
 
     submit_btn=Button(root1,text="add marks to database",command=add_marks)
-    submit_btn.grid(row=5,column=0,columnspan=2,pady=10,padx=10,ipadx=100)
+    submit_btn.grid(row=6,column=0,columnspan=2,pady=10,padx=10,ipadx=100)
     
     root1.mainloop()
-    mydb.commit()
 
 
 
